@@ -50,7 +50,7 @@ const createEmployee = async (req, res) => {
                 email: body.email
             }
         });
-        console.log("employee",body.email);
+       // console.log("employee",body.email);
         if(employee) {
             res.status(constants.STATUS_CODES.VALIDATION).json({
                 statusCode: constants.STATUS_CODES.VALIDATION,
@@ -59,14 +59,14 @@ const createEmployee = async (req, res) => {
         constants.STATUS_CODES.VALIDATION
       );
     
-     const employee = await Employee.create({ 
-      firstName: body.firstName,
-      lastName: body.lastName,
+     const employee_data = await Employee.create({ 
+      first_name: body.first_name,
+      last_name: body.last_name,
       email: body.email,
-      countrycode: body.countrycode,
+      country_code: body.country_code,
       gender: body.gender,
       dob: body.dob,
-      contact:body.contact,
+      phone_no:body.phone_no,
       address:body.address,
       created_at: new Date(),
       updated_at: new Date(),
@@ -75,8 +75,8 @@ const createEmployee = async (req, res) => {
         res.status(constants.STATUS_CODES.SUCCESS).json({
             statusCode: constants.STATUS_CODES.SUCCESS,
             message: 'Employee created successfully'
-        }
-        //constants.STATUS_CODES.SUCCESS
+        },
+        constants.STATUS_CODES.SUCCESS
         );
     }
 }catch(error) {
@@ -85,8 +85,8 @@ const createEmployee = async (req, res) => {
             statusCode: constants.STATUS_CODES.INTERNAL_SERVER_ERROR,
             message: 'Internal Server Error',
             err : error
-        }
-       // constants.STATUS_CODES.INTERNAL_SERVER_ERROR
+        },
+        constants.STATUS_CODES.INTERNAL_SERVER_ERROR
         );
     }
 };
@@ -97,13 +97,13 @@ const getEmployee = async (req, res) => {
         const employee = await Employee.findOne({ 
             attributes: [
                 "id",
-                "firstName",
-                "lastName",
+                "first_name",
+                "last_name",
                 "email",
                 "gender",
                 "dob",
-                "contact",
-                "countrycode",
+                "phone_no",
+                "country_code",
                 "address",
             ],
             where : {
