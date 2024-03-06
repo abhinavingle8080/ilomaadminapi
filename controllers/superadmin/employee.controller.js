@@ -41,8 +41,6 @@ const getAllEmployees = async (req, res) => {
 
 
 const createEmployee = async (req, res) => {
-
-    //const { firstName, lastName, dob, email,gender, contact, countrycode, address } = req.body;
     try {
         const body = req.body;
         const employee = await Employee.findOne({
@@ -50,44 +48,39 @@ const createEmployee = async (req, res) => {
                 email: body.email
             }
         });
-       // console.log("employee",body.email);
-        if(employee) {
-            res.status(constants.STATUS_CODES.VALIDATION).json({
+
+        if (employee) {
+            return res.status(constants.STATUS_CODES.VALIDATION).json({
                 statusCode: constants.STATUS_CODES.VALIDATION,
-                message: 'Email already exist'
-        },
-        constants.STATUS_CODES.VALIDATION
-      );
-    
-     const employee_data = await Employee.create({ 
-      first_name: body.first_name,
-      last_name: body.last_name,
-      email: body.email,
-      country_code: body.country_code,
-      gender: body.gender,
-      dob: body.dob,
-      phone_no:body.phone_no,
-      address:body.address,
-      created_at: new Date(),
-      updated_at: new Date(),
-     });
+                message: 'Email already exists'
+            });
+        }
+
+        const employee_data = await Employee.create({ 
+            first_name: body.first_name,
+            last_name: body.last_name,
+            email: body.email,
+            country_code: body.country_code,
+            gender: body.gender,
+            dob: body.dob,
+            phone_no: body.phone_no,
+            address: body.address,
+            created_at: new Date(),
+            updated_at: new Date(),
+        });
 
         res.status(constants.STATUS_CODES.SUCCESS).json({
             statusCode: constants.STATUS_CODES.SUCCESS,
-            message: 'Employee created successfully'
-        },
-        constants.STATUS_CODES.SUCCESS
-        );
-    }
-}catch(error) {
+            message: 'Employee created successfully',
+            data: employee_data // Return the created employee data
+        });
+    } catch (error) {
         console.error(error);
         res.status(constants.STATUS_CODES.INTERNAL_SERVER_ERROR).json({
             statusCode: constants.STATUS_CODES.INTERNAL_SERVER_ERROR,
             message: 'Internal Server Error',
-            err : error
-        },
-        constants.STATUS_CODES.INTERNAL_SERVER_ERROR
-        );
+            error: error // Include the error message in the response
+        });
     }
 };
 
@@ -181,6 +174,7 @@ const updateEmployee = async (req, res) => {
 const deleteEmployee = async (req, res) => {
     try {
         const body = req.body;
+        console.log(body);
         const employee = await Employee.findOne({
             where: {
                 id: body.employee_id,
@@ -203,7 +197,7 @@ const deleteEmployee = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
+        console.log(error);
         res.status(constants.STATUS_CODES.INTERNAL_SERVER_ERROR).json({
             statusCode: constants.STATUS_CODES.INTERNAL_SERVER_ERROR,
             message: 'Internal Server Error',
@@ -219,121 +213,3 @@ module.exports = {
     updateEmployee,
     deleteEmployee
 };
-/**const { Employee } = require('../../models');
-const constants = require('../../config/constants');
-
-const getAllEmployees = async (req, res) => {
-    try {
-        const employees = await Employee.findAndCountAll();
-        res.status(constants.STATUS_CODES.SUCCESS).json({
-            statusCode: constants.STATUS_CODES.SUCCESS,
-            message: 'Employees retrieved successfully',
-            data: { employees }
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(constants.STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-            statusCode: constants.STATUS_CODES.INTERNAL_SERVER_ERROR,
-            message: 'Internal Server Error'
-        });
-    }
-};
-
-const createEmployee = async (req, res) => {
-    const { firstname, lastname, dob, email, contacts, gender, city } = req.body;
-    try {
-        const employee = await Employee.create({ firstname, lastname, dob, email, contacts, gender, city });
-        res.status(constants.STATUS_CODES.CREATED).json({
-            statusCode: constants.STATUS_CODES.CREATED,
-            message: 'Employee created successfully'
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(constants.STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-            statusCode: constants.STATUS_CODES.INTERNAL_SERVER_ERROR,
-            message: 'Internal Server Error'
-        });
-    }
-};
-
-const getEmployee = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const employee = await Employee.findOne({ where: { id } });
-        if (!employee) {
-            return res.status(constants.STATUS_CODES.NOT_FOUND).json({
-                statusCode: constants.STATUS_CODES.NOT_FOUND,
-                message: 'Employee not found'
-            });
-        }
-        res.status(constants.STATUS_CODES.SUCCESS).json({
-            statusCode: constants.STATUS_CODES.SUCCESS,
-            message: 'Employee retrieved successfully',
-            data: { employee }
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(constants.STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-            statusCode: constants.STATUS_CODES.INTERNAL_SERVER_ERROR,
-            message: 'Internal Server Error'
-        });
-    }
-};
-
-const updateEmployee = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { firstname, lastname, dob, email, contacts, gender, city } = req.body;
-        const employee = await Employee.findByPk(id);
-        if (!employee) {
-            return res.status(constants.STATUS_CODES.NOT_FOUND).json({
-                statusCode: constants.STATUS_CODES.NOT_FOUND,
-                message: 'Employee not found'
-            });
-        }
-        await employee.update({ firstname, lastname, dob, email, contacts, gender, city });
-        res.status(constants.STATUS_CODES.SUCCESS).json({
-            statusCode: constants.STATUS_CODES.SUCCESS,
-            message: 'Employee updated successfully'
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(constants.STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-            statusCode: constants.STATUS_CODES.INTERNAL_SERVER_ERROR,
-            message: 'Internal Server Error'
-        });
-    }
-};
-
-const deleteEmployee = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const employee = await Employee.findByPk(id);
-        if (!employee) {
-            return res.status(constants.STATUS_CODES.NOT_FOUND).json({
-                statusCode: constants.STATUS_CODES.NOT_FOUND,
-                message: 'Employee not found'
-            });
-        }
-        await employee.destroy();
-        res.status(constants.STATUS_CODES.SUCCESS).json({
-            statusCode: constants.STATUS_CODES.SUCCESS,
-            message: 'Employee deleted successfully'
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(constants.STATUS_CODES.INTERNAL_SERVER_ERROR).json({
-            statusCode: constants.STATUS_CODES.INTERNAL_SERVER_ERROR,
-            message: 'Internal Server Error'
-        });
-    }
-};
-
-module.exports = {
-    getAllEmployees,
-    createEmployee,
-    getEmployee,
-    updateEmployee,
-    deleteEmployee
-};**/
-
