@@ -6,7 +6,7 @@ const getAllLeaves = async (req, res) => {
         const body = req.body;
         const leaves = await Leave.findAndCountAll({
             attributes: [
-                "id",
+                
                 "date",
                 "day",
                 "duration",
@@ -85,7 +85,7 @@ const getLeave = async (req, res) => {
                 "reason"
             ],
             where: {
-                id: body.id,
+                id: body.leave_id,
             }
         });
         if (!leave) {
@@ -114,7 +114,7 @@ const updateLeave = async (req, res) => {
         const body = req.body;
         const leave = await Leave.findOne({
             where: {
-                id: body.id,
+                id: body.leave_id,
             }
         });
         if (!leave) {
@@ -150,7 +150,7 @@ const deleteLeave = async (req, res) => {
         const body = req.body;
         const leave = await Leave.findOne({
             where: {
-                id: body.id,
+                id: body.leave_id,
             },
         });
         if (!leave) {
@@ -160,6 +160,10 @@ const deleteLeave = async (req, res) => {
             });
         }
         await leave.destroy();
+           /* where : {
+                id : leave.id,
+            }
+        });*/
 
         res.status(constants.STATUS_CODES.SUCCESS).json({
             statusCode: constants.STATUS_CODES.SUCCESS,

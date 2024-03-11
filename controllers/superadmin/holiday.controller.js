@@ -34,6 +34,7 @@ const getAllHolidays = async (req, res) => {
 const createHoliday = async (req, res) => {
     try {
         const body = req.body;
+        console.log(body);
         const holiday = await Holiday.findOne({
             where: {
                 name: body.name
@@ -79,7 +80,7 @@ const getHoliday = async (req, res) => {
                 "description"
             ],
             where: {
-                id: body.id,
+                id: body.holiday_id,
             }
         });
         if (!holiday) {
@@ -108,7 +109,7 @@ const updateHoliday = async (req, res) => {
         const body = req.body;
         const holiday = await Holiday.findOne({
             where: {
-                id: body.id,
+                id: body.holiday_id,
             }
         });
         if (!holiday) {
@@ -143,7 +144,7 @@ const deleteHoliday = async (req, res) => {
         const body = req.body;
         const holiday = await Holiday.findOne({
             where: {
-                id: body.id,
+                id: body.holiday_id,
             },
         });
         if (!holiday) {
